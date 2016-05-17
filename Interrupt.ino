@@ -24,6 +24,7 @@ void interruptSetup() {
 // Timer 1 makes sure that we take a reading every 2 miliseconds
 ISR(TIMER1_OVF_vect) {
   cli();                                      // disable interrupts while we do this
+  if(time_oled) time_oled--;
   if (checkHeart) {
     Signal = analogRead(pulsePin);              // read the Pulse Sensor
     sampleCounter += 2;                         // keep track of the time in mS with this variable
@@ -40,7 +41,11 @@ ISR(TIMER1_OVF_vect) {
     if (Signal > thresh && Signal > P) {        // thresh condition helps avoid noise
       P = Signal;                             // P is the peak
     }                                        // keep track of highest point in pulse wave
-    if (P - T > 200) {
+//    if (P - T > 300) {
+  if (true) {
+      if(countdown){
+        countdown--;
+      }
       //  NOW IT'S TIME TO LOOK FOR THE HEART BEAT
       // signal surges up in value every time there is a pulse
       if (N > 250) {                                  // avoid high frequency noise
@@ -100,10 +105,10 @@ ISR(TIMER1_OVF_vect) {
     }
   }
   if (sleepon) {
-    if(totave>15000){
+    if(totave>5000){
       awake++;
     }else{
-      if(totave>5000){
+      if(totave>2000){
         light++;
       }else{
         deep++;
